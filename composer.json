@@ -1,0 +1,22 @@
+{
+  "name": "jeyroik/df-php-client",
+  "description": "DF PHP client helpers",
+  "require": {
+    "jeyroik/extas-foundation": "6.*",
+    "jeyroik/df-triggers": "1.*",
+    "jeyroik/df-applications": "4.*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9",
+    "jeyroik/extas-snuffbox": "1.*"
+  },
+  "autoload": {
+    "psr-4": {
+      "deflou\\": "src/",
+      "tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit --testdox --coverage-clover=coverage.xml --whitelist=src tests"
+  }
+}
