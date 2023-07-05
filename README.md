@@ -1,6 +1,6 @@
 ![PHP Composer](https://github.com/jeyroik/df-php-client/workflows/PHP%20Composer/badge.svg?branch=master)
 ![codecov.io](https://codecov.io/gh/jeyroik/df-php-client/coverage.svg?branch=master)
-
+<a href="https://codeclimate.com/github/jeyroik/df-php-client/maintainability"><img src="https://api.codeclimate.com/v1/badges/ac3ed16a4751f8d40b1a/maintainability" /></a>
 [![Latest Stable Version](https://poser.pugx.org/jeyroik/df-php-client/v)](//packagist.org/packages/jeyroik/df-php-client)
 [![Total Downloads](https://poser.pugx.org/jeyroik/df-php-client/downloads)](//packagist.org/packages/jeyroik/df-php-client)
 [![Dependents](https://poser.pugx.org/jeyroik/df-php-client/dependents)](//packagist.org/packages/jeyroik/df-php-client)

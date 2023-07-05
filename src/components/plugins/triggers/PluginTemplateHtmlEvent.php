@@ -59,28 +59,14 @@ class PluginTemplateHtmlEvent extends Plugin implements IStageTriggerOpTemplate
             ITemplateHtml::RESULT__ITEMS => ''
         ];
 
-        $header = [
-            'name' => $plugin->getName(),
-            'title' => $plugin->getTitle(),
-            'description' => $plugin->getDescription()
-        ];
+        $result[ITemplateHtml::RESULT__HEADER] = $this->prepareHeader($plugin, $render);
 
-        $headerViewPath = $this->getParameter(static::PARAM__VIEW_HEADER)->getValue();
-        $result[ITemplateHtml::RESULT__HEADER] = $render->render($headerViewPath, $header);
-
-        $itemViewPath = $this->getParameter(static::PARAM__VIEW_ITEM)->getValue();
-        $items = [];
         $contextParams = $context->buildParams();
         $contextParam = $contextParams->hasOne(ITemplateHtml::FIELD__PARAM) 
                             ? $contextParams->buildOne(ITemplateHtml::FIELD__PARAM)->getValue() 
                             : false;
 
-        foreach ($templateData as $param) {
-            $data = $param->__toArray();
-            $data[ITemplateHtml::FIELD__PARAM] = $contextParam;
-            $items[] = $render->render($itemViewPath, $data);
-        }
-
+        $items = $this->renderEachItem($templateData, $contextParam, $render);
         $itemsViewPath = $this->getParameter(static::PARAM__VIEW_ITEMS)->getValue();
         $result[ITemplateHtml::RESULT__ITEMS] = $render->render($itemsViewPath, [
             'items' => implode('', $items),
@@ -89,5 +75,32 @@ class PluginTemplateHtmlEvent extends Plugin implements IStageTriggerOpTemplate
         ]);
 
         $template = $result;
+    }
+
+    protected function prepareHeader(ITriggerOperationPlugin $plugin, $render): string
+    {
+        $header = [
+            'name' => $plugin->getName(),
+            'title' => $plugin->getTitle(),
+            'description' => $plugin->getDescription()
+        ];
+
+        $headerViewPath = $this->getParameter(static::PARAM__VIEW_HEADER)->getValue();
+
+        return $render->render($headerViewPath, $header);
+    }
+
+    protected function renderEachItem($templateData, $contextParam, $render): array
+    {
+        $items = [];
+        $itemViewPath = $this->getParameter(static::PARAM__VIEW_ITEM)->getValue();
+
+        foreach ($templateData as $param) {
+            $data = $param->__toArray();
+            $data[ITemplateHtml::FIELD__PARAM] = $contextParam;
+            $items[] = $render->render($itemViewPath, $data);
+        }
+
+        return $items;
     }
 }
