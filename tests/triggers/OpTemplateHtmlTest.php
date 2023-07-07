@@ -3,6 +3,7 @@
 use deflou\components\applications\AppWriter;
 use deflou\components\instances\InstanceService;
 use deflou\components\plugins\triggers\PluginTemplateHtmlEvent;
+use deflou\components\plugins\triggers\PluginTemplateHtmlNow;
 use deflou\components\triggers\ETrigger;
 use deflou\components\triggers\operations\TriggerOperationService;
 use deflou\components\triggers\TemplateHtml;
@@ -25,7 +26,7 @@ class OpTemplateHtmlTest extends ExtasTestCase
     protected bool $isNeedInstallLibsItems = true;
     protected string $testPath = __DIR__;
 
-    public function testEventTemplate()
+    public function testEventAndNowTemplate()
     {
         $appService = new AppWriter();
         $app = $appService->createAppByConfigPath(__DIR__ . '/../resources/app.json', true);
@@ -45,7 +46,25 @@ class OpTemplateHtmlTest extends ExtasTestCase
         $opService = new TriggerOperationService();
         $opService->plugins()->create(new Plugin([
             Plugin::FIELD__CLASS => PluginTemplateHtmlEvent::class,
-            Plugin::FIELD__STAGE => IStageTriggerOpTemplate::NAME . ITemplateHtml::NAME . '.event',
+            Plugin::FIELD__STAGE => PluginTemplateHtmlEvent::STAGE,
+            Plugin::FIELD__PARAMETERS => [
+                PluginTemplateHtmlEvent::PARAM__VIEW_HEADER => [
+                    IParam::FIELD__NAME => PluginTemplateHtmlEvent::PARAM__VIEW_HEADER,
+                    IParam::FIELD__VALUE => __DIR__ . '/../resources/header.php'
+                ],
+                PluginTemplateHtmlEvent::PARAM__VIEW_ITEM => [
+                    IParam::FIELD__NAME => PluginTemplateHtmlEvent::PARAM__VIEW_ITEM,
+                    IParam::FIELD__VALUE => __DIR__ . '/../resources/item.php'
+                ],
+                PluginTemplateHtmlEvent::PARAM__VIEW_ITEMS => [
+                    IParam::FIELD__NAME => PluginTemplateHtmlEvent::PARAM__VIEW_ITEMS,
+                    IParam::FIELD__VALUE => __DIR__ . '/../resources/items.php'
+                ]
+            ]
+        ]));
+        $opService->plugins()->create(new Plugin([
+            Plugin::FIELD__CLASS => PluginTemplateHtmlNow::class,
+            Plugin::FIELD__STAGE => PluginTemplateHtmlNow::STAGE,
             Plugin::FIELD__PARAMETERS => [
                 PluginTemplateHtmlEvent::PARAM__VIEW_HEADER => [
                     IParam::FIELD__NAME => PluginTemplateHtmlEvent::PARAM__VIEW_HEADER,
@@ -73,9 +92,22 @@ class OpTemplateHtmlTest extends ExtasTestCase
         $this->assertIsArray($eventResult);
         
         $this->assertArrayHasKey(ITemplateHtml::RESULT__HEADER, $eventResult, 'Missed header in a result');
-        $this->assertEquals(file_get_contents(__DIR__ . '/../resources/rendered.header.html'), $eventResult['header']);
+        $this->assertEquals(file_get_contents(__DIR__ . '/../resources/event.rendered.header.html'), $eventResult['header']);
 
         $this->assertArrayHasKey(ITemplateHtml::RESULT__ITEMS, $eventResult, 'Missed items in a result');
-        $this->assertEquals(file_get_contents(__DIR__ . '/../resources/rendered.items.html'), $eventResult['items']);
+        $this->assertEquals(file_get_contents(__DIR__ . '/../resources/event.rendered.items.html'), $eventResult['items']);
+
+        $this->assertArrayHasKey('now', $result);
+        $nowResult = $result['now'];
+        $this->assertIsArray($nowResult);
+        
+        $this->assertArrayHasKey(ITemplateHtml::RESULT__HEADER, $nowResult, 'Missed header in a result');
+        $this->assertEquals(file_get_contents(__DIR__ . '/../resources/now.rendered.header.html'), $nowResult['header']);
+
+        $this->assertArrayHasKey(ITemplateHtml::RESULT__ITEMS, $nowResult, 'Missed items in a result');
+        $this->assertStringContainsString(
+            file_get_contents(__DIR__ . '/../resources/now.rendered.items.html'), 
+            $nowResult['items']
+        );
     }
 }
