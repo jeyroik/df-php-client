@@ -1,3 +1,7 @@
+# 0.2.1
+
+- Updated `df-triggers` to `v2`.
+
 # 0.2.0
 
 - Added HTML template for `now` operation plugin.

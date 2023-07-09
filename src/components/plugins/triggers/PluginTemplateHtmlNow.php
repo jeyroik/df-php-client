@@ -43,6 +43,7 @@ use extas\interfaces\parameters\IParam;
 class PluginTemplateHtmlNow extends PluginTemplateHtml 
 {
     public const STAGE = self::STAGE__PREFIX . 'now';
+    
     protected function renderEachItem($templateData, $contextParam, $render): array
     {
         $items = [];
