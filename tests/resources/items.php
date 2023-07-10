@@ -1,6 +1,6 @@
 <div role="tabpanel" class="tab-pane active" id="@plugin">
     <div class="row">
-        <div class="col-md-12">Выберите атрибут события. При выполнении операции атрибут будет заменён на его значение.</div>
+        <div class="col-md-12">Воспользуйтесь плагином</div>
     </div>
     <div class="row">
         <div class="col-md-12">

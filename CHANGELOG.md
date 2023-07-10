@@ -1,3 +1,7 @@
+# 0.3.0
+
+- Added HTML template for `text` operation plugin.
+
 # 0.2.1
 
 - Updated `df-triggers` to `v2`.
