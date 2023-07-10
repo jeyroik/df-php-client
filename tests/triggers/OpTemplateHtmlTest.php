@@ -4,6 +4,7 @@ use deflou\components\applications\AppWriter;
 use deflou\components\instances\InstanceService;
 use deflou\components\plugins\triggers\PluginTemplateHtmlEvent;
 use deflou\components\plugins\triggers\PluginTemplateHtmlNow;
+use deflou\components\plugins\triggers\PluginTemplateHtmlText;
 use deflou\components\triggers\ETrigger;
 use deflou\components\triggers\operations\TriggerOperationService;
 use deflou\components\triggers\TemplateHtml;
@@ -11,6 +12,7 @@ use deflou\components\triggers\TriggerService;
 use deflou\interfaces\stages\triggers\IStageTriggerOpTemplate;
 use deflou\interfaces\triggers\events\ITriggerEvent;
 use deflou\interfaces\triggers\ITemplateHtml;
+use extas\components\parameters\Param;
 use extas\components\plugins\Plugin;
 use extas\interfaces\parameters\IParam;
 use tests\ExtasTestCase;
@@ -66,23 +68,53 @@ class OpTemplateHtmlTest extends ExtasTestCase
             Plugin::FIELD__CLASS => PluginTemplateHtmlNow::class,
             Plugin::FIELD__STAGE => PluginTemplateHtmlNow::STAGE,
             Plugin::FIELD__PARAMETERS => [
-                PluginTemplateHtmlEvent::PARAM__VIEW_HEADER => [
-                    IParam::FIELD__NAME => PluginTemplateHtmlEvent::PARAM__VIEW_HEADER,
+                PluginTemplateHtmlNow::PARAM__VIEW_HEADER => [
+                    IParam::FIELD__NAME => PluginTemplateHtmlNow::PARAM__VIEW_HEADER,
                     IParam::FIELD__VALUE => __DIR__ . '/../resources/header.php'
                 ],
-                PluginTemplateHtmlEvent::PARAM__VIEW_ITEM => [
-                    IParam::FIELD__NAME => PluginTemplateHtmlEvent::PARAM__VIEW_ITEM,
+                PluginTemplateHtmlNow::PARAM__VIEW_ITEM => [
+                    IParam::FIELD__NAME => PluginTemplateHtmlNow::PARAM__VIEW_ITEM,
                     IParam::FIELD__VALUE => __DIR__ . '/../resources/item.php'
                 ],
-                PluginTemplateHtmlEvent::PARAM__VIEW_ITEMS => [
-                    IParam::FIELD__NAME => PluginTemplateHtmlEvent::PARAM__VIEW_ITEMS,
+                PluginTemplateHtmlNow::PARAM__VIEW_ITEMS => [
+                    IParam::FIELD__NAME => PluginTemplateHtmlNow::PARAM__VIEW_ITEMS,
                     IParam::FIELD__VALUE => __DIR__ . '/../resources/items.php'
+                ]
+            ]
+        ]));
+        $opService->plugins()->create(new Plugin([
+            Plugin::FIELD__CLASS => PluginTemplateHtmlText::class,
+            Plugin::FIELD__STAGE => PluginTemplateHtmlText::STAGE,
+            Plugin::FIELD__PARAMETERS => [
+                PluginTemplateHtmlText::PARAM__VIEW_HEADER => [
+                    IParam::FIELD__NAME => PluginTemplateHtmlText::PARAM__VIEW_HEADER,
+                    IParam::FIELD__VALUE => __DIR__ . '/../resources/header.php'
+                ],
+                PluginTemplateHtmlText::PARAM__VIEW_ITEM => [
+                    IParam::FIELD__NAME => PluginTemplateHtmlText::PARAM__VIEW_ITEM,
+                    IParam::FIELD__VALUE => __DIR__ . '/../resources/item.php'
+                ],
+                PluginTemplateHtmlText::PARAM__VIEW_ITEMS => [
+                    IParam::FIELD__NAME => PluginTemplateHtmlText::PARAM__VIEW_ITEMS,
+                    IParam::FIELD__VALUE => __DIR__ . '/../resources/items.php'
+                ],
+                PluginTemplateHtmlText::PARAM__TITLE => [
+                    IParam::FIELD__NAME => PluginTemplateHtmlText::PARAM__TITLE,
+                    IParam::FIELD__VALUE => 'Введите текст для @param.title'
                 ]
             ]
         ]));
 
         $result = $opService->getPluginsTemplates($instance, $trigger, new TemplateHtml([
-            TemplateHtml::FIELD__RENDER => new TestRender()
+            TemplateHtml::FIELD__RENDER => new TestRender(),
+            TemplateHtml::FIELD__PARAMS => [
+                TemplateHtml::FIELD__PARAM => [
+                    IParam::FIELD__NAME => TemplateHtml::FIELD__PARAM,
+                    IParam::FIELD__VALUE => new Param([
+                        Param::FIELD__TITLE => 'Some param'
+                    ])
+                ]
+            ]
         ]));
 
         $this->assertIsArray($result);
@@ -109,5 +141,14 @@ class OpTemplateHtmlTest extends ExtasTestCase
             file_get_contents(__DIR__ . '/../resources/now.rendered.items.html'), 
             $nowResult['items']
         );
+
+        $textResult = $result['text'];
+        $this->assertIsArray($textResult);
+        
+        $this->assertArrayHasKey(ITemplateHtml::RESULT__HEADER, $textResult, 'Missed header in a result');
+        $this->assertEquals(file_get_contents(__DIR__ . '/../resources/text.rendered.header.html'), $textResult['header']);
+
+        $this->assertArrayHasKey(ITemplateHtml::RESULT__ITEMS, $textResult, 'Missed items in a result');
+        $this->assertEquals(file_get_contents(__DIR__ . '/../resources/text.rendered.items.html'), $textResult['items']);
     }
 }

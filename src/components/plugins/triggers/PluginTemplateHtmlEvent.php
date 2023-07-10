@@ -1,6 +1,7 @@
 <?php
 namespace deflou\components\plugins\triggers;
 
+use deflou\components\triggers\operations\plugins\PluginEvent;
 use deflou\interfaces\triggers\ITemplateHtml;
 
 /**
@@ -41,7 +42,7 @@ use deflou\interfaces\triggers\ITemplateHtml;
  */
 class PluginTemplateHtmlEvent extends PluginTemplateHtml
 {
-    public const STAGE = self::STAGE__PREFIX . 'event';
+    public const STAGE = self::STAGE__PREFIX . PluginEvent::NAME;
 
     protected function renderEachItem($templateData, $contextParam, $render): array
     {
