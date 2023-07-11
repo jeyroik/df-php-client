@@ -1,3 +1,7 @@
+# 0.3.1
+
+- Added `param` to `header` views.
+
 # 0.3.0
 
 - Added HTML template for `text` operation plugin.
