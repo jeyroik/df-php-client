@@ -56,12 +56,12 @@ abstract class PluginTemplateHtml extends Plugin implements IStageTriggerOpTempl
             ITemplateHtml::RESULT__ITEMS => ''
         ];
 
-        $result[ITemplateHtml::RESULT__HEADER] = $this->prepareHeader($plugin, $render);
-
         $contextParams = $context->buildParams();
         $contextParam = $contextParams->hasOne(ITemplateHtml::FIELD__PARAM) 
                             ? $contextParams->buildOne(ITemplateHtml::FIELD__PARAM)->getValue() 
                             : false;
+
+        $result[ITemplateHtml::RESULT__HEADER] = $this->prepareHeader($plugin, $render, $contextParam);
 
         $items = $this->renderEachItem($templateData, $contextParam, $render);
         $itemsViewPath = $this->getParameter(static::PARAM__VIEW_ITEMS)->getValue();
@@ -74,12 +74,13 @@ abstract class PluginTemplateHtml extends Plugin implements IStageTriggerOpTempl
         $template = $result;
     }
 
-    protected function prepareHeader(ITriggerOperationPlugin $plugin, $render): string
+    protected function prepareHeader(ITriggerOperationPlugin $plugin, $render, $contextParam): string
     {
         $header = [
             'name' => $plugin->getName(),
             'title' => $plugin->getTitle(),
-            'description' => $plugin->getDescription()
+            'description' => $plugin->getDescription(),
+            'param' => $contextParam
         ];
 
         $headerViewPath = $this->getParameter(static::PARAM__VIEW_HEADER)->getValue();
