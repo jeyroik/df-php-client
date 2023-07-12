@@ -7,6 +7,7 @@ use deflou\interfaces\triggers\operations\ITriggerOperationPlugin;
 use deflou\interfaces\triggers\operations\plugins\templates\ITemplateContext;
 use extas\components\parameters\Param;
 use extas\components\plugins\Plugin;
+use extas\components\Replace;
 use extas\components\systems\System;
 
 /**
@@ -145,6 +146,15 @@ abstract class PluginTemplateHtml extends Plugin implements IStageTriggerOpTempl
         $items = $this->renderEachItem($templateData, $contextParam, $render, $data);
 
         return $items;
+    }
+
+    protected function applyItemData(array &$data, array $item): void
+    {
+        if (isset($data['plugin'])) {
+            $data['plugin'] = $data['plugin']->setValue(
+                Replace::please()->apply(['item' => $item])->to($data['plugin']->getValue())
+            );
+        }
     }
 
     abstract protected function renderEachItem($templateData, $contextParam, $render, $data): array;

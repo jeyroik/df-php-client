@@ -50,12 +50,14 @@ class PluginTemplateHtmlNow extends PluginTemplateHtml
         $items = [];
 
         foreach ($templateData as $format) {
-            $curData = array_merge($data, [
+            $curData = [
                 ITemplateHtml::FIELD__PARAM => $contextParam,
                 IParam::FIELD__NAME => $format,
                 IParam::FIELD__TITLE => $format,
                 IParam::FIELD__DESCRIPTION => 'Пример: ' . date($format)
-            ]);
+            ];
+            $this->applyItemData($data, $curData);
+            $curData = array_merge($data, $curData);
             $items[] = $render->render($this->itemViewPath, $curData);
         }
 

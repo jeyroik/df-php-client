@@ -1,3 +1,7 @@
+# 0.4.2
+
+- Fixed applying item data.
+
 # 0.4.1
 
 - Added system options support.

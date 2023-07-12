@@ -3,6 +3,7 @@ namespace deflou\components\plugins\triggers;
 
 use deflou\components\triggers\operations\plugins\PluginEvent;
 use deflou\interfaces\triggers\ITemplateHtml;
+use extas\components\Replace;
 
 /**
  * In a plugin conf:
@@ -49,6 +50,7 @@ class PluginTemplateHtmlEvent extends PluginTemplateHtml
         $items = [];
         
         foreach ($templateData as $param) {
+            $this->applyItemData($data, $param->__toArray());
             $curData = array_merge($data, $param->__toArray());
             $curData[ITemplateHtml::FIELD__PARAM] = $contextParam;
             $items[] = $render->render($this->itemViewPath, $curData);

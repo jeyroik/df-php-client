@@ -1,1 +1,1 @@
-<option value="@name" title="@description">@title</option>
+<option value="@plugin.value" title="@description">@title</option>

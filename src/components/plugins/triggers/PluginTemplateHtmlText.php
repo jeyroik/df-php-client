@@ -54,14 +54,16 @@ class PluginTemplateHtmlText extends PluginTemplateHtml
         $items = [];
         $titleText = $this->getParameter(static::PARAM__TITLE)->getValue();
         $text = Replace::please()->apply([static::CONTEXT_PARAM__MASK => $contextParam->__toArray()])->to($titleText);
-        $data = array_merge($data, [
+        $curData = [
             ITemplateHtml::FIELD__PARAM => $contextParam,
             IParam::FIELD__NAME => '',
             IParam::FIELD__TITLE => $text,
             IParam::FIELD__DESCRIPTION => $text
-        ]);
+        ];
+        $this->applyItemData($data, $curData);
+        $curData = array_merge($data, $curData);
 
-        $items[] = $render->render($this->itemViewPath, $data);
+        $items[] = $render->render($this->itemViewPath, $curData);
 
         return $items;
     }
