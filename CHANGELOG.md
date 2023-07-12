@@ -1,3 +1,7 @@
+# 0.4.3
+
+- Skip plugins if they are broken.
+
 # 0.4.2
 
 - Fixed applying item data.

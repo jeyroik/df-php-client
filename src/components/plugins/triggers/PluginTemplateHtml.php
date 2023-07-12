@@ -68,19 +68,29 @@ abstract class PluginTemplateHtml extends Plugin implements IStageTriggerOpTempl
     protected string $itemViewPath = '';
     public function __invoke(array $templateData, ITriggerOperationPlugin $plugin, mixed &$template, ITemplateContext $context): void
     {
-        $render = $context->buildParams()->buildOne(ITemplateHtml::FIELD__RENDER)->getValue();
-        $result = [
-            ITemplateHtml::RESULT__HEADER => '',
-            ITemplateHtml::RESULT__ITEMS => ''
-        ];
+        try {
+            $render = $context->buildParams()->buildOne(ITemplateHtml::FIELD__RENDER)->getValue();
+            $result = [
+                ITemplateHtml::RESULT__HEADER => '',
+                ITemplateHtml::RESULT__ITEMS => ''
+            ];
 
-        $contextParams = $context->buildParams();
-        $contextParam = $contextParams->hasOne(ITemplateHtml::FIELD__PARAM) 
-                            ? $contextParams->buildOne(ITemplateHtml::FIELD__PARAM)->getValue() 
-                            : false;
+            $contextParams = $context->buildParams();
+            $contextParam = $contextParams->hasOne(ITemplateHtml::FIELD__PARAM) 
+                                ? $contextParams->buildOne(ITemplateHtml::FIELD__PARAM)->getValue() 
+                                : false;
 
-        $result[ITemplateHtml::RESULT__HEADER] = $this->prepareHeader($plugin, $render, $contextParam);
+            $result[ITemplateHtml::RESULT__HEADER] = $this->prepareHeader($plugin, $render, $contextParam);
+            $result[ITemplateHtml::RESULT__ITEMS] = $this->prepareItems($plugin, $templateData, $contextParam, $render);
 
+            $template = $result;
+        } catch (\Exception $e) {
+            //todo add loging
+        }
+    }
+
+    protected function prepareItems($plugin, $templateData, $contextParam, $render): string
+    {
         $items = $this->prepareEachItem($plugin, $templateData, $contextParam, $render);
         $itemsViewPath = $this->getParameter(static::PARAM__VIEW_ITEMS)->getValue();
         $itemsData = [
@@ -100,9 +110,7 @@ abstract class PluginTemplateHtml extends Plugin implements IStageTriggerOpTempl
             }
         }
 
-        $result[ITemplateHtml::RESULT__ITEMS] = $render->render($itemsViewPath, $itemsData);
-
-        $template = $result;
+        return $render->render($itemsViewPath, $itemsData);
     }
 
     protected function prepareHeader(ITriggerOperationPlugin $plugin, $render, $contextParam): string
