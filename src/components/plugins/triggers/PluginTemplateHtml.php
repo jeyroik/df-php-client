@@ -5,7 +5,9 @@ use deflou\interfaces\stages\triggers\IStageTriggerOpTemplate;
 use deflou\interfaces\triggers\ITemplateHtml;
 use deflou\interfaces\triggers\operations\ITriggerOperationPlugin;
 use deflou\interfaces\triggers\operations\plugins\templates\ITemplateContext;
+use extas\components\parameters\Param;
 use extas\components\plugins\Plugin;
+use extas\components\systems\System;
 
 /**
  * In a plugin conf:
@@ -47,7 +49,22 @@ abstract class PluginTemplateHtml extends Plugin implements IStageTriggerOpTempl
     public const PARAM__VIEW_HEADER = 'header';
     public const PARAM__VIEW_ITEM = 'item';
     public const PARAM__VIEW_ITEMS = 'items';
+    public const PARAM__DESCRIPTION = 'desc';
+    public const PARAM__ACTIVE = 'active';
+
+    public const ACTIVE__YES = 'active';
+    public const ACTIVE__NO = '';
+
+    public const VIEW__DEFAULT = '@default';
+
+    public const SYS_OPTION__HEADER = 'trigger.operation.view.header';
+    public const SYS_OPTION__ITEM_BADGE = self::VIEW__DEFAULT . '.item.badge';
+    public const SYS_OPTION__ITEM_LIST = self::VIEW__DEFAULT . '.item.list';
+    public const SYS_OPTION__ITEMS_BADGE = self::VIEW__DEFAULT . '.items.badge';
+    public const SYS_OPTION__ITEMS_LIST = self::VIEW__DEFAULT . '.items.list';
     public const STAGE__PREFIX = IStageTriggerOpTemplate::NAME . 'html.';
+
+    protected string $itemViewPath = '';
     public function __invoke(array $templateData, ITriggerOperationPlugin $plugin, mixed &$template, ITemplateContext $context): void
     {
         $render = $context->buildParams()->buildOne(ITemplateHtml::FIELD__RENDER)->getValue();
@@ -63,13 +80,26 @@ abstract class PluginTemplateHtml extends Plugin implements IStageTriggerOpTempl
 
         $result[ITemplateHtml::RESULT__HEADER] = $this->prepareHeader($plugin, $render, $contextParam);
 
-        $items = $this->renderEachItem($templateData, $contextParam, $render);
+        $items = $this->prepareEachItem($plugin, $templateData, $contextParam, $render);
         $itemsViewPath = $this->getParameter(static::PARAM__VIEW_ITEMS)->getValue();
-        $result[ITemplateHtml::RESULT__ITEMS] = $render->render($itemsViewPath, [
+        $itemsData = [
             'items' => implode('', $items),
-            'plugin' => $plugin->getName(),
-            'param' => $contextParam
-        ]);
+            'param' => $contextParam,
+            'plugin' => $plugin
+        ];
+
+        if (str_contains($itemsViewPath, static::VIEW__DEFAULT)) {
+            $system = new System();
+            if ($system->hasOption($itemsViewPath)) {
+                $itemsViewPath = $system->getOptionValue($itemsViewPath);
+                $itemsData['plugin'] = $this->getParameter($plugin->getName());
+                $itemsData['active'] = $this->hasParameter(static::PARAM__ACTIVE) 
+                                    ? $this->getParameter(static::PARAM__ACTIVE)->getValue() 
+                                    : static::ACTIVE__NO;
+            }
+        }
+
+        $result[ITemplateHtml::RESULT__ITEMS] = $render->render($itemsViewPath, $itemsData);
 
         $template = $result;
     }
@@ -80,13 +110,42 @@ abstract class PluginTemplateHtml extends Plugin implements IStageTriggerOpTempl
             'name' => $plugin->getName(),
             'title' => $plugin->getTitle(),
             'description' => $plugin->getDescription(),
-            'param' => $contextParam
+            'param' => $contextParam,
+            'active' => $this->hasParameter(static::PARAM__ACTIVE) 
+                                    ? $this->getParameter(static::PARAM__ACTIVE)->getValue() 
+                                    : static::ACTIVE__NO
         ];
 
         $headerViewPath = $this->getParameter(static::PARAM__VIEW_HEADER)->getValue();
 
+        if ($headerViewPath == static::VIEW__DEFAULT) {
+            $system = new System();
+            if (!$system->hasOption(static::SYS_OPTION__HEADER)) {
+                return '';
+            }
+            $headerViewPath = $system->getOptionValue(static::SYS_OPTION__HEADER);
+        }
+
         return $render->render($headerViewPath, $header);
     }
 
-    abstract protected function renderEachItem($templateData, $contextParam, $render): array;
+    protected function prepareEachItem(ITriggerOperationPlugin $plugin, $templateData, $contextParam, $render): array
+    {
+        $this->itemViewPath = $this->getParameter(static::PARAM__VIEW_ITEM)->getValue();
+        $data = [];
+
+        if (str_contains($this->itemViewPath, static::VIEW__DEFAULT)) {
+            $system = new System();
+            if ($system->hasOption($this->itemViewPath)) {
+                $this->itemViewPath = $system->getOptionValue($this->itemViewPath);
+                $data['plugin'] = $this->getParameter($plugin->getName());
+            }
+        }
+
+        $items = $this->renderEachItem($templateData, $contextParam, $render, $data);
+
+        return $items;
+    }
+
+    abstract protected function renderEachItem($templateData, $contextParam, $render, $data): array;
 }

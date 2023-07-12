@@ -49,20 +49,19 @@ class PluginTemplateHtmlText extends PluginTemplateHtml
     public const PARAM__TITLE = 'title';
     public const CONTEXT_PARAM__MASK = 'param';
     
-    protected function renderEachItem($templateData, $contextParam, $render): array
+    protected function renderEachItem($templateData, $contextParam, $render, $data): array
     {
         $items = [];
-        $itemViewPath = $this->getParameter(static::PARAM__VIEW_ITEM)->getValue();
         $titleText = $this->getParameter(static::PARAM__TITLE)->getValue();
         $text = Replace::please()->apply([static::CONTEXT_PARAM__MASK => $contextParam->__toArray()])->to($titleText);
-        $data = [
+        $data = array_merge($data, [
             ITemplateHtml::FIELD__PARAM => $contextParam,
             IParam::FIELD__NAME => '',
             IParam::FIELD__TITLE => $text,
             IParam::FIELD__DESCRIPTION => $text
-        ];
+        ]);
 
-        $items[] = $render->render($itemViewPath, $data);
+        $items[] = $render->render($this->itemViewPath, $data);
 
         return $items;
     }
