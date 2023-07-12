@@ -1,3 +1,7 @@
+# 0.4.1
+
+- Added system options support.
+
 # 0.3.1
 
 - Added `param` to `header` views.

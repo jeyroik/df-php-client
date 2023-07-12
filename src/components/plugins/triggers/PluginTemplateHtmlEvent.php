@@ -44,15 +44,14 @@ class PluginTemplateHtmlEvent extends PluginTemplateHtml
 {
     public const STAGE = self::STAGE__PREFIX . PluginEvent::NAME;
 
-    protected function renderEachItem($templateData, $contextParam, $render): array
+    protected function renderEachItem($templateData, $contextParam, $render, $data): array
     {
         $items = [];
-        $itemViewPath = $this->getParameter(static::PARAM__VIEW_ITEM)->getValue();
-
+        
         foreach ($templateData as $param) {
-            $data = $param->__toArray();
-            $data[ITemplateHtml::FIELD__PARAM] = $contextParam;
-            $items[] = $render->render($itemViewPath, $data);
+            $curData = array_merge($data, $param->__toArray());
+            $curData[ITemplateHtml::FIELD__PARAM] = $contextParam;
+            $items[] = $render->render($this->itemViewPath, $curData);
         }
 
         return $items;

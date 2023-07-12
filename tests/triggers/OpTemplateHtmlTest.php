@@ -2,10 +2,12 @@
 
 use deflou\components\applications\AppWriter;
 use deflou\components\instances\InstanceService;
+use deflou\components\plugins\triggers\PluginTemplateHtml;
 use deflou\components\plugins\triggers\PluginTemplateHtmlEvent;
 use deflou\components\plugins\triggers\PluginTemplateHtmlNow;
 use deflou\components\plugins\triggers\PluginTemplateHtmlText;
 use deflou\components\triggers\ETrigger;
+use deflou\components\triggers\operations\plugins\PluginEvent;
 use deflou\components\triggers\operations\TriggerOperationService;
 use deflou\components\triggers\TemplateHtml;
 use deflou\components\triggers\TriggerService;
@@ -14,6 +16,8 @@ use deflou\interfaces\triggers\events\ITriggerEvent;
 use deflou\interfaces\triggers\ITemplateHtml;
 use extas\components\parameters\Param;
 use extas\components\plugins\Plugin;
+use extas\components\systems\options\SystemOption;
+use extas\components\systems\System;
 use extas\interfaces\parameters\IParam;
 use tests\ExtasTestCase;
 use tests\resources\TestRender;
@@ -22,7 +26,8 @@ class OpTemplateHtmlTest extends ExtasTestCase
 {
     protected array $libsToInstall = [
         'jeyroik/df-triggers' => ['php', 'php'],
-        'jeyroik/df-applications' => ['php', 'json']
+        'jeyroik/df-applications' => ['php', 'json'],
+        'jeyroik/extas-system-options' => ['php', 'php']
         //'vendor/lib' => ['php', 'json'] storage ext, extas ext
     ];
     protected bool $isNeedInstallLibsItems = true;
@@ -45,6 +50,20 @@ class OpTemplateHtmlTest extends ExtasTestCase
             ITriggerEvent::FIELD__NAME => 'test_event'
         ]);
 
+        $system = new System();
+        $system->systemOptions()->create(new SystemOption([
+            SystemOption::FIELD__NAME => PluginTemplateHtml::SYS_OPTION__HEADER,
+            SystemOption::FIELD__VALUE => __DIR__ . '/../resources/header.php'
+        ]));
+        $system->systemOptions()->create(new SystemOption([
+            SystemOption::FIELD__NAME => PluginTemplateHtml::SYS_OPTION__ITEM_BADGE,
+            SystemOption::FIELD__VALUE => __DIR__ . '/../resources/item.php'
+        ]));
+        $system->systemOptions()->create(new SystemOption([
+            SystemOption::FIELD__NAME => PluginTemplateHtml::SYS_OPTION__ITEMS_BADGE,
+            SystemOption::FIELD__VALUE => __DIR__ . '/../resources/items.php'
+        ]));
+
         $opService = new TriggerOperationService();
         $opService->plugins()->create(new Plugin([
             Plugin::FIELD__CLASS => PluginTemplateHtmlEvent::class,
@@ -52,15 +71,19 @@ class OpTemplateHtmlTest extends ExtasTestCase
             Plugin::FIELD__PARAMETERS => [
                 PluginTemplateHtmlEvent::PARAM__VIEW_HEADER => [
                     IParam::FIELD__NAME => PluginTemplateHtmlEvent::PARAM__VIEW_HEADER,
-                    IParam::FIELD__VALUE => __DIR__ . '/../resources/header.php'
+                    IParam::FIELD__VALUE => PluginTemplateHtmlEvent::VIEW__DEFAULT
                 ],
                 PluginTemplateHtmlEvent::PARAM__VIEW_ITEM => [
                     IParam::FIELD__NAME => PluginTemplateHtmlEvent::PARAM__VIEW_ITEM,
-                    IParam::FIELD__VALUE => __DIR__ . '/../resources/item.php'
+                    IParam::FIELD__VALUE => PluginTemplateHtmlEvent::SYS_OPTION__ITEM_BADGE
                 ],
                 PluginTemplateHtmlEvent::PARAM__VIEW_ITEMS => [
                     IParam::FIELD__NAME => PluginTemplateHtmlEvent::PARAM__VIEW_ITEMS,
-                    IParam::FIELD__VALUE => __DIR__ . '/../resources/items.php'
+                    IParam::FIELD__VALUE => PluginTemplateHtmlEvent::SYS_OPTION__ITEMS_BADGE
+                ],
+                PluginEvent::NAME => [
+                    IParam::FIELD__NAME => PluginEvent::NAME,
+                    IParam::FIELD__VALUE => '@event.@item.name'
                 ]
             ]
         ]));

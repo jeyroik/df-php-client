@@ -1,4 +1,4 @@
-<div role="tabpanel" class="tab-pane active" id="@plugin">
+<div role="tabpanel" class="tab-pane active" id="@plugin.name">
     <div class="row">
         <div class="col-md-12">Воспользуйтесь плагином</div>
     </div>

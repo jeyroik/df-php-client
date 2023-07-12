@@ -45,19 +45,18 @@ class PluginTemplateHtmlNow extends PluginTemplateHtml
 {
     public const STAGE = self::STAGE__PREFIX . PluginNow::NAME;
     
-    protected function renderEachItem($templateData, $contextParam, $render): array
+    protected function renderEachItem($templateData, $contextParam, $render, $data): array
     {
         $items = [];
-        $itemViewPath = $this->getParameter(static::PARAM__VIEW_ITEM)->getValue();
 
         foreach ($templateData as $format) {
-            $data = [
+            $curData = array_merge($data, [
                 ITemplateHtml::FIELD__PARAM => $contextParam,
                 IParam::FIELD__NAME => $format,
                 IParam::FIELD__TITLE => $format,
                 IParam::FIELD__DESCRIPTION => 'Пример: ' . date($format)
-            ];
-            $items[] = $render->render($itemViewPath, $data);
+            ]);
+            $items[] = $render->render($this->itemViewPath, $curData);
         }
 
         return $items;
