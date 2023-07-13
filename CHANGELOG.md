@@ -1,3 +1,7 @@
+# 0.4.5
+
+- Simplify applying item data.
+
 # 0.4.4
 
 - Apply item data to a `title` too.

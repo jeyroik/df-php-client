@@ -50,8 +50,8 @@ class PluginTemplateHtmlEvent extends PluginTemplateHtml
         $items = [];
         
         foreach ($templateData as $param) {
-            $this->applyItemData($data, $param->__toArray());
-            $curData = array_merge($data, $param->__toArray());
+            $curData = $param->__toArray();
+            $this->applyItemData($data, $curData);
             $curData[ITemplateHtml::FIELD__PARAM] = $contextParam;
             $items[] = $render->render($this->itemViewPath, $curData);
         }

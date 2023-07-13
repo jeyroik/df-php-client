@@ -61,7 +61,6 @@ class PluginTemplateHtmlText extends PluginTemplateHtml
             IParam::FIELD__DESCRIPTION => $text
         ];
         $this->applyItemData($data, $curData);
-        $curData = array_merge($data, $curData);
 
         $items[] = $render->render($this->itemViewPath, $curData);
 
