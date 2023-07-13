@@ -57,7 +57,6 @@ class PluginTemplateHtmlNow extends PluginTemplateHtml
                 IParam::FIELD__DESCRIPTION => 'Пример: ' . date($format)
             ];
             $this->applyItemData($data, $curData);
-            $curData = array_merge($data, $curData);
             $items[] = $render->render($this->itemViewPath, $curData);
         }
 
