@@ -1,3 +1,7 @@
+# 0.4.4
+
+- Apply item data to a `title` too.
+
 # 0.4.3
 
 - Skip plugins if they are broken.
