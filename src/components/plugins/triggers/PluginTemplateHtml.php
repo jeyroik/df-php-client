@@ -159,7 +159,7 @@ abstract class PluginTemplateHtml extends Plugin implements IStageTriggerOpTempl
     protected function applyItemData(array $data, array &$item): void
     {
         if (isset($data['plugin'])) {
-            $plugin = $data['plugin'];
+            $plugin = clone $data['plugin'];
             $plugin->setValue(
                 Replace::please()->apply(['item' => $item])->to($data['plugin']->getValue())
             );

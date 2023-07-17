@@ -1,3 +1,7 @@
+# 0.4.6
+
+- Fixed modifying data plugin object.
+
 # 0.4.5
 
 - Simplify applying item data.
