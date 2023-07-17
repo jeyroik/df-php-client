@@ -51,7 +51,9 @@ class PluginTemplateHtmlEvent extends PluginTemplateHtml
         
         foreach ($templateData as $param) {
             $curData = $param->__toArray();
-            $this->applyItemData($data, $curData);
+            $curData['plugin'] = clone $data['plugin'];
+            $curData['plugin']['title'] = Replace::please()->apply(['item' => $curData])->to($data['plugin']['title']);
+            $curData['plugin']['value'] = Replace::please()->apply(['item' => $curData])->to($data['plugin']['value']);
             $curData[ITemplateHtml::FIELD__PARAM] = $contextParam;
             $items[] = $render->render($this->itemViewPath, $curData);
         }
