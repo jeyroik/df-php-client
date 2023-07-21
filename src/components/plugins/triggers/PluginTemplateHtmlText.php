@@ -1,11 +1,10 @@
 <?php
 namespace deflou\components\plugins\triggers;
 
-use deflou\components\triggers\operations\plugins\PluginText;
+use deflou\components\triggers\values\plugins\PluginText;
 use deflou\interfaces\triggers\ITemplateHtml;
 use extas\components\Replace;
 use extas\interfaces\parameters\IParam;
-use PluginTest;
 
 /**
  * In a plugin conf:

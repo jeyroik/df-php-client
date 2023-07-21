@@ -7,11 +7,10 @@ use deflou\components\plugins\triggers\PluginTemplateHtmlEvent;
 use deflou\components\plugins\triggers\PluginTemplateHtmlNow;
 use deflou\components\plugins\triggers\PluginTemplateHtmlText;
 use deflou\components\triggers\ETrigger;
-use deflou\components\triggers\operations\plugins\PluginEvent;
-use deflou\components\triggers\operations\TriggerOperationService;
+use deflou\components\triggers\values\plugins\PluginEvent;
 use deflou\components\triggers\TemplateHtml;
 use deflou\components\triggers\TriggerService;
-use deflou\interfaces\stages\triggers\IStageTriggerOpTemplate;
+use deflou\components\triggers\values\ValueService;
 use deflou\interfaces\triggers\events\ITriggerEvent;
 use deflou\interfaces\triggers\ITemplateHtml;
 use extas\components\parameters\Param;
@@ -64,7 +63,7 @@ class OpTemplateHtmlTest extends ExtasTestCase
             SystemOption::FIELD__VALUE => __DIR__ . '/../resources/items.php'
         ]));
 
-        $opService = new TriggerOperationService();
+        $opService = new ValueService();
         $opService->plugins()->create(new Plugin([
             Plugin::FIELD__CLASS => PluginTemplateHtmlEvent::class,
             Plugin::FIELD__STAGE => PluginTemplateHtmlEvent::STAGE,

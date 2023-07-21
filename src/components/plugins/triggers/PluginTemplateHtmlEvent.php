@@ -1,9 +1,8 @@
 <?php
 namespace deflou\components\plugins\triggers;
 
-use deflou\components\triggers\operations\plugins\PluginEvent;
+use deflou\components\triggers\values\plugins\PluginEvent;
 use deflou\interfaces\triggers\ITemplateHtml;
-use extas\components\Replace;
 
 /**
  * In a plugin conf:
