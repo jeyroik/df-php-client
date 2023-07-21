@@ -4,7 +4,7 @@
   "require": {
     "jeyroik/extas-foundation": "6.*",
     "jeyroik/extas-system-options": "0.*",
-    "jeyroik/df-triggers": "2.*",
+    "jeyroik/df-triggers": "3.*",
     "jeyroik/df-applications": "4.*"
   },
   "require-dev": {

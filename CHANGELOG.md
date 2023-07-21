@@ -1,3 +1,7 @@
+# 1.0.0
+
+- Updated to `df-triggers v3`.
+
 # 0.4.6
 
 - Fixed modifying data plugin object.

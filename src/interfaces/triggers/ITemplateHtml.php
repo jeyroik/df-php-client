@@ -1,7 +1,7 @@
 <?php
 namespace deflou\interfaces\triggers;
 
-use deflou\interfaces\triggers\operations\plugins\templates\ITemplateContext;
+use deflou\interfaces\triggers\values\plugins\templates\ITemplateContext;
 
 interface ITemplateHtml extends ITemplateContext
 {

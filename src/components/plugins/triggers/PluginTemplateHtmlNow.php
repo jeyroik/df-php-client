@@ -1,7 +1,7 @@
 <?php
 namespace deflou\components\plugins\triggers;
 
-use deflou\components\triggers\operations\plugins\PluginNow;
+use deflou\components\triggers\values\plugins\PluginNow;
 use deflou\interfaces\triggers\ITemplateHtml;
 use extas\interfaces\parameters\IParam;
 
